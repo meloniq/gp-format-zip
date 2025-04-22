@@ -17,6 +17,8 @@
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.html
  *
  * Text Domain:       gp-format-zip
+ *
+ * Requires Plugins:  glotpress
  */
 
 namespace Meloniq\GpFormatZip;
