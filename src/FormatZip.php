@@ -41,7 +41,6 @@ class FormatZip extends GP_Format {
 	 */
 	public function print_exported_file( $project, $locale, $translation_set, $entries ) {
 		if ( empty( GP::$formats['po'] ) || empty( GP::$formats['mo'] ) ) {
-			trigger_error( 'PO and MO formats are not available.', E_USER_WARNING );
 			return false;
 		}
 
@@ -56,7 +55,6 @@ class FormatZip extends GP_Format {
 
 		$zip_file = $this->create_zip( $po_file, $mo_file, $file_name );
 		if ( false === $zip_file ) {
-			trigger_error( 'Failed to create Zip file: ' . $file_name, E_USER_WARNING );
 			return false;
 		}
 
@@ -74,7 +72,6 @@ class FormatZip extends GP_Format {
 	 */
 	public function create_zip( $po_file, $mo_file, $file_name ) {
 		if ( ! class_exists( 'ZipArchive' ) ) {
-			trigger_error( 'ZipArchive class is not available.', E_USER_WARNING );
 			return false;
 		}
 
@@ -83,7 +80,6 @@ class FormatZip extends GP_Format {
 
 		$zip_open = $zip->open( $zip_file, ZipArchive::CREATE );
 		if ( $zip_open !== true ) {
-			trigger_error( 'Failed to open Zip file: ' . $zip_open, E_USER_WARNING );
 			return false;
 		}
 
@@ -91,7 +87,6 @@ class FormatZip extends GP_Format {
 		$res_po = $zip->addFromString( $file_name . '.po', $po_file );
 		$res_mo = $zip->addFromString( $file_name . '.mo', $mo_file );
 		if ( $res_po === false || $res_mo === false ) {
-			trigger_error( 'Failed to add files to Zip: ' . $res_po . ', ' . $res_mo, E_USER_WARNING );
 			$zip->close();
 			return false;
 		}
@@ -101,7 +96,6 @@ class FormatZip extends GP_Format {
 		// Read file content to return it.
 		$zip_file_content = file_get_contents( $zip_file );
 		if ( $zip_file_content === false ) {
-			trigger_error( 'Failed to read Zip file content: ' . $zip_file, E_USER_WARNING );
 			return false;
 		}
 
