@@ -1,4 +1,10 @@
 <?php
+/**
+ * Format Zip.
+ *
+ * @package Meloniq\GpFormatZip
+ */
+
 namespace Meloniq\GpFormatZip;
 
 use GP;
@@ -9,6 +15,11 @@ use GP_Translation;
 use GP_Project;
 use ZipArchive;
 
+/**
+ * Format Zip class.
+ *
+ * This class handles the export of translations in a Zip file format.
+ */
 class FormatZip extends GP_Format {
 
 	/**
@@ -44,6 +55,11 @@ class FormatZip extends GP_Format {
 			return false;
 		}
 
+		$language_code = $this->get_language_code( $locale );
+		if ( false === $language_code ) {
+			$language_code = $locale->slug;
+		}
+
 		$po_object = GP::$formats['po'];
 		$mo_object = GP::$formats['mo'];
 
@@ -55,6 +71,7 @@ class FormatZip extends GP_Format {
 
 		$zip_file = $this->create_zip( $po_file, $mo_file, $file_name );
 		if ( false === $zip_file ) {
+			gp_error_log( 'Failed to create Zip file for ' . $file_name );
 			return false;
 		}
 
@@ -72,6 +89,7 @@ class FormatZip extends GP_Format {
 	 */
 	public function create_zip( $po_file, $mo_file, $file_name ) {
 		if ( ! class_exists( 'ZipArchive' ) ) {
+			gp_error_log( 'ZipArchive class not found' );
 			return false;
 		}
 
@@ -80,6 +98,7 @@ class FormatZip extends GP_Format {
 
 		$zip_open = $zip->open( $zip_file, ZipArchive::CREATE );
 		if ( $zip_open !== true ) {
+			gp_error_log( 'Failed to open Zip file: ' . $zip_open );
 			return false;
 		}
 
@@ -87,6 +106,7 @@ class FormatZip extends GP_Format {
 		$res_po = $zip->addFromString( $file_name . '.po', $po_file );
 		$res_mo = $zip->addFromString( $file_name . '.mo', $mo_file );
 		if ( $res_po === false || $res_mo === false ) {
+			gp_error_log( 'Failed to add files to Zip file: ' . $file_name );
 			$zip->close();
 			return false;
 		}
@@ -96,6 +116,7 @@ class FormatZip extends GP_Format {
 		// Read file content to return it.
 		$zip_file_content = file_get_contents( $zip_file );
 		if ( $zip_file_content === false ) {
+			gp_error_log( 'Failed to read Zip file: ' . $file_name );
 			return false;
 		}
 
@@ -166,5 +187,4 @@ class FormatZip extends GP_Format {
 
 		return $file_name;
 	}
-
 }

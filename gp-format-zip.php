@@ -19,6 +19,8 @@
  * Text Domain:       gp-format-zip
  *
  * Requires Plugins:  glotpress
+ *
+ * @package Meloniq\GpFormatZip
  */
 
 namespace Meloniq\GpFormatZip;
@@ -49,3 +51,22 @@ function gp_init() {
 	$gpzip_translate['format-zip'] = GP::$formats['zip'];
 }
 add_action( 'gp_init', 'Meloniq\GpFormatZip\gp_init' );
+
+/**
+ * Error logging.
+ *
+ * @param mixed $message The message to log.
+ *
+ * @return void
+ */
+function gp_error_log( $message ) {
+	if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
+		return;
+	}
+
+	if ( is_array( $message ) || is_object( $message ) ) {
+		error_log( print_r( $message, true ) );
+	} else {
+		error_log( $message );
+	}
+}
