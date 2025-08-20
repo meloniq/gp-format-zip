@@ -2,7 +2,7 @@
 Contributors: meloniq
 Tags: glotpress, download, format, zip, archive
 Tested up to: 6.8
-Stable tag: 1.0
+Stable tag: 1.1
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,6 +21,9 @@ It requires the PHP ZIP extension to be installed and enabled on your server.
 
 
 == Changelog ==
+
+= 1.1 =
+* Added PHP language file to the ZIP archive.
 
 = 1.0 =
 * Initial release.

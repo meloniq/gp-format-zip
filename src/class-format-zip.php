@@ -51,7 +51,7 @@ class Format_Zip extends GP_Format {
 	 * @return string|false The generated Zip file.
 	 */
 	public function print_exported_file( $project, $locale, $translation_set, $entries ) {
-		if ( empty( GP::$formats['po'] ) || empty( GP::$formats['mo'] ) ) {
+		if ( empty( GP::$formats['po'] ) || empty( GP::$formats['mo'] ) || empty( GP::$formats['php'] ) ) {
 			return false;
 		}
 
@@ -60,16 +60,18 @@ class Format_Zip extends GP_Format {
 			$language_code = $locale->slug;
 		}
 
-		$po_object = GP::$formats['po'];
-		$mo_object = GP::$formats['mo'];
+		$po_object  = GP::$formats['po'];
+		$mo_object  = GP::$formats['mo'];
+		$php_object = GP::$formats['php'];
 
 		// Note: Use @ to suppress PHP Deprecated errors from the PO and MO objects.
-		$po_file = @$po_object->print_exported_file( $project, $locale, $translation_set, $entries );
-		$mo_file = @$mo_object->print_exported_file( $project, $locale, $translation_set, $entries );
+		$po_file  = @$po_object->print_exported_file( $project, $locale, $translation_set, $entries ); // phpcs:ignore
+		$mo_file  = @$mo_object->print_exported_file( $project, $locale, $translation_set, $entries ); // phpcs:ignore
+		$php_file = @$php_object->print_exported_file( $project, $locale, $translation_set, $entries ); // phpcs:ignore
 
 		$file_name = $this->get_file_name( $project, $locale );
 
-		$zip_file = $this->create_zip( $po_file, $mo_file, $file_name );
+		$zip_file = $this->create_zip( $po_file, $mo_file, $php_file, $file_name );
 		if ( false === $zip_file ) {
 			gp_error_log( 'Failed to create Zip file for ' . $file_name );
 			return false;
@@ -83,29 +85,31 @@ class Format_Zip extends GP_Format {
 	 *
 	 * @param string $po_file The path to the PO file.
 	 * @param string $mo_file The path to the MO file.
+	 * @param string $php_file The path to the PHP file.
 	 * @param string $file_name The name of the files in the Zip file.
 	 *
 	 * @return string|false The created Zip file.
 	 */
-	public function create_zip( $po_file, $mo_file, $file_name ) {
+	public function create_zip( $po_file, $mo_file, $php_file, $file_name ) {
 		if ( ! class_exists( 'ZipArchive' ) ) {
 			gp_error_log( 'ZipArchive class not found' );
 			return false;
 		}
 
-		$zip = new ZipArchive();
+		$zip      = new ZipArchive();
 		$zip_file = $file_name . '.zip';
 
 		$zip_open = $zip->open( $zip_file, ZipArchive::CREATE );
-		if ( $zip_open !== true ) {
+		if ( true !== $zip_open ) {
 			gp_error_log( 'Failed to open Zip file: ' . $zip_open );
 			return false;
 		}
 
 		// Add the files from strings to the Zip file.
-		$res_po = $zip->addFromString( $file_name . '.po', $po_file );
-		$res_mo = $zip->addFromString( $file_name . '.mo', $mo_file );
-		if ( $res_po === false || $res_mo === false ) {
+		$res_po  = $zip->addFromString( $file_name . '.po', $po_file );
+		$res_mo  = $zip->addFromString( $file_name . '.mo', $mo_file );
+		$res_php = $zip->addFromString( $file_name . '.l10n.php', $php_file );
+		if ( false === $res_po || false === $res_mo || false === $res_php ) {
 			gp_error_log( 'Failed to add files to Zip file: ' . $file_name );
 			$zip->close();
 			return false;
@@ -114,8 +118,8 @@ class Format_Zip extends GP_Format {
 		$zip->close();
 
 		// Read file content to return it.
-		$zip_file_content = file_get_contents( $zip_file );
-		if ( $zip_file_content === false ) {
+		$zip_file_content = file_get_contents( $zip_file ); // phpcs:ignore
+		if ( false === $zip_file_content ) {
 			gp_error_log( 'Failed to read Zip file: ' . $file_name );
 			return false;
 		}
@@ -180,7 +184,7 @@ class Format_Zip extends GP_Format {
 
 		// Prepare the file name with the project path and language code.
 		$parents = array_reverse( $project->path_to_root() );
-		$slugs = wp_list_pluck( $parents, 'slug' );
+		$slugs   = wp_list_pluck( $parents, 'slug' );
 
 		$file_name = implode( '-', $slugs ) . '-' . $language_code;
 		$file_name = apply_filters( 'gpzip_file_name', $file_name, $project, $locale );
