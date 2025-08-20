@@ -11,7 +11,7 @@ Adds a ZIP file format to download translations from GlotPress.
 == Description ==
 
 Adds a ZIP file format to download translations from [GlotPress](https://wordpress.org/plugins/glotpress/).
-This format is a ZIP archive containing the PO & MO translation files for the selected language.
+This format is a ZIP archive containing the PO, MO & PHP translation files for the selected language.
 
 
 = Configuration =
