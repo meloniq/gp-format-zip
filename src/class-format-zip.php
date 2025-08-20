@@ -20,7 +20,7 @@ use ZipArchive;
  *
  * This class handles the export of translations in a Zip file format.
  */
-class FormatZip extends GP_Format {
+class Format_Zip extends GP_Format {
 
 	/**
 	 * Name of file format, used in file format dropdowns.

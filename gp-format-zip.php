@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * Plugin Name:       GP Format ZIP
  * Plugin URI:        https://blog.meloniq.net/gp-format-zip/
  *
@@ -43,10 +43,10 @@ define( 'GPZIP_TD', 'gp-format-zip' );
 function gp_init() {
 	global $gpzip_translate;
 
-	require_once __DIR__ . '/src/FormatZip.php';
+	require_once __DIR__ . '/src/class-format-zip.php';
 
 	// Register the format with GlotPress.
-	GP::$formats['zip'] = new FormatZip();
+	GP::$formats['zip'] = new Format_Zip();
 
 	$gpzip_translate['format-zip'] = GP::$formats['zip'];
 }
@@ -65,8 +65,8 @@ function gp_error_log( $message ) {
 	}
 
 	if ( is_array( $message ) || is_object( $message ) ) {
-		error_log( print_r( $message, true ) );
+		error_log( print_r( $message, true ) ); // phpcs:ignore
 	} else {
-		error_log( $message );
+		error_log( $message ); // phpcs:ignore
 	}
 }
