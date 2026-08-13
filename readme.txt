@@ -1,7 +1,7 @@
 === GP Format ZIP ===
 Contributors: meloniq
 Tags: glotpress, download, format, zip, archive
-Tested up to: 6.8
+Tested up to: 7.0
 Stable tag: 1.1
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
